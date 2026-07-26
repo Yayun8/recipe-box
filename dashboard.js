@@ -4,7 +4,7 @@ import { subscribeRecipes, toggleFavorite } from "./db.js";
 setMode("sweet"); // dashboard 走中性配色
 
 let allRecipes = [];
-let filter = "fav"; // 預設為收藏
+let currentFilter = "fav"; // 確保預設只篩選收藏
 
 const grid = qs("#recipeGrid");
 const searchInput = qs("#searchInput");

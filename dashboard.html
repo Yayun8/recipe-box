@@ -19,19 +19,20 @@
 
   <main class="wrap">
     <div class="toolbar" style="border-bottom:none; margin-bottom:16px;">
-      <button class="tag-pill" data-filter="all">全部</button>
-      <button class="tag-pill" data-filter="sweet">🍰 甜食</button>
-      <button class="tag-pill" data-filter="savory">🍳 鹹食</button>
-      <button class="tag-pill" data-filter="fav">★ 收藏</button>
-      <button id="randomBtn" class="btn btn-ghost" style="padding: 8px 16px;">🎲 隨機推薦</button>
-      <input class="search-input" id="searchInput" type="search" placeholder="搜尋…" style="max-width:220px;" />
+      <!-- 只保留收藏按鈕，並預設讓它保持啟動 (is-active) 或直接抓取收藏 -->
+      <button class="tag-pill is-active" data-filter="fav">★ 收藏</button>
+      
+      <!-- 搜尋框 -->
+      <input class="search-input" id="searchInput" type="search" placeholder="搜尋收藏的食譜…" style="max-width:280px;" />
+      
+      <!-- 右側的新增食譜與同步狀態 -->
       <a class="btn btn-accent" href="edit_recipe.html" style="margin-left:auto;">＋ 新增食譜</a>
       <span class="sync-badge" id="syncBadge"><span class="dot"></span><span class="label">同步中…</span></span>
     </div>
 
-    <!-- 💡 這裡就是剛剛少掉的食譜卡片顯示網格！ -->
+    <!-- 食譜卡片網格 -->
     <section class="recipe-grid" id="recipeGrid" aria-live="polite">
-      <div class="empty-state">正在讀取食譜…</div>
+      <div class="empty-state">正在讀取收藏…</div>
     </section>
 
     <!-- 隨機推薦彈出視窗 Modal -->
