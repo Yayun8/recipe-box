@@ -62,16 +62,69 @@ grid.addEventListener("click", (e) => {
   );
 });
 
-randomBtn.addEventListener("click", () => {
+// ==============================
+// 隨機推薦彈出視窗相關邏輯
+// ==============================
+const randomModal = document.querySelector("#randomModal");
+const closeModalBtn = document.querySelector("#closeModalBtn");
+const drawAgainBtn = document.querySelector("#drawAgainBtn");
+const modalCardBody = document.querySelector("#modalCardBody");
+
+function triggerRandomRecipe() {
   const mode = getMode();
   const pool = filterRecipes(allRecipes, { mode, keyword: "", tag: activeTag });
-  const pick = pickRandom(pool);
-  if (!pick) {
+  
+  if (!pool.length) {
     alert("這個模式下還沒有食譜可以推薦,先新增一道吧!");
     return;
   }
-  window.location.href = `detail.html?id=${pick.id}`;
-});
+
+  const pick = pickRandom(pool);
+  if (modalCardBody && pick) {
+    const imgSrc = pick.image ? pick.image : "";
+    const stepsCount = pick.steps ? pick.steps.length : 0;
+    const title = pick.title || "未命名食譜";
+
+    modalCardBody.innerHTML = `
+      <div onclick="window.location.href='detail.html?id=${pick.id}'" style="cursor: pointer; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        ${imgSrc ? `<div style="width: 100%; height: 180px; overflow: hidden;"><img src="${imgSrc}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;"></div>` : ""}
+        <div style="padding: 15px;">
+          <h3 style="font-size: 18px; margin: 0 0 8px 0; color: #1a2b4c;">${title}</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; color: #666; font-size: 14px;">
+            <span>${stepsCount} 個步驟</span>
+            <span style="color: #f39c12;">⭐ 點擊查看詳細做法</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (randomModal) {
+    randomModal.style.display = "flex";
+  }
+}
+
+if (randomBtn) {
+  randomBtn.addEventListener("click", triggerRandomRecipe);
+}
+
+if (closeModalBtn) {
+  closeModalBtn.addEventListener("click", () => {
+    if (randomModal) randomModal.style.display = "none";
+  });
+}
+
+if (drawAgainBtn) {
+  drawAgainBtn.addEventListener("click", triggerRandomRecipe);
+}
+
+if (randomModal) {
+  randomModal.addEventListener("click", (e) => {
+    if (e.target === randomModal) {
+      randomModal.style.display = "none";
+    }
+  });
+}
 
 searchInput.addEventListener("input", debounce(render, 150));
 
