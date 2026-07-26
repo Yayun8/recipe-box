@@ -579,7 +579,7 @@ textarea#ingredientsTextarea:focus {
 /* 預設或全部模式下（data-mode="all" 或沒有特別指定時），隨機按鈕的專屬顏色 */
 :root:not([data-mode="sweet"]):not([data-mode="savory"]) #randomBtn,
 [data-mode="all"] #randomBtn {
-  background-color: #faff67 !important; /* 這裡可以改成你想要的按鈕背景色，例如沉穩的靛藍色 */
+  background-color: #f9fd98 !important; /* 這裡可以改成你想要的按鈕背景色，例如沉穩的靛藍色 */
   border-color: #f1f36d !important;
   color: #ffffff !important;
 }
