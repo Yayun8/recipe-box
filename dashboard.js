@@ -48,23 +48,21 @@ filterBtns.forEach((btn) => {
   });
 });
 
-filterBtns.forEach((btn) => {
-  if (btn.dataset.filter === "fav") {
-    btn.classList.add("is-active");
-  } else {
-    btn.classList.remove("is-active");
-  }
-});
+if (filterBtns && filterBtns.length > 0) {
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filter = btn.dataset.filter;
+      filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+      render();
+    });
+  });
 
-if (grid) {
-  grid.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-fav-id]");
-    if (!btn) return;
-    e.preventDefault();
-    const id = btn.dataset.favId;
-    const recipe = allRecipes.find((r) => r.id === id);
-    if (!recipe) return;
-    toggleFavorite(id, !recipe.isFavorite).catch((err) => console.error(err));
+  filterBtns.forEach((btn) => {
+    if (btn.dataset.filter === "fav") {
+      btn.classList.add("is-active");
+    } else {
+      btn.classList.remove("is-active");
+    }
   });
 }
 
