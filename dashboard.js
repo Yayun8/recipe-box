@@ -85,12 +85,22 @@ if (randomBtn) {
       alert("目前這個分類沒有食譜可以推薦！");
       return;
     }
-    
+
+    // 隨機挑選一筆
     const randomIndex = Math.floor(Math.random() * targetRecipes.length);
     const selected = targetRecipes[randomIndex];
+
+    // 假設你在首頁準備了一個顯示隨機推薦的容器，例如 id="randomResultCard"
+    const randomCardContainer = document.querySelector("#randomResultCard");
     
-    if (selected && selected.id) {
-      window.location.href = `detail.html?id=${selected.id}`;
+    if (selected && randomCardContainer) {
+      // 產生卡片 HTML，點擊卡片才會跳轉到 detail.html
+      randomCardContainer.innerHTML = `
+        <div class="recipe-card" onclick="window.location.href='detail.html?id=${selected.id}'" style="cursor: pointer; border: 2px dashed #0056b3; padding: 15px; border-radius: 8px; margin-top: 10px; background: #f8f9fa;">
+          <h3>✨ 今日隨機推薦：${selected.name || selected.title}</h3>
+          <p>點擊這張卡片查看完整食譜與做法！</p>
+        </div>
+      `;
     }
   });
 }
