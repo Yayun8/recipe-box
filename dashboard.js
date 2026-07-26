@@ -15,11 +15,12 @@ function render() {
   const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
   let list = allRecipes;
 
-  if (filter === "sweet" || filter === "savory") {
-    list = list.filter((r) => r.category === filter);
-  } else if (filter === "fav") {
+  // 💡 修正：將 filter 改為 currentFilter
+  if (currentFilter === "sweet" || currentFilter === "savory") {
+    list = list.filter((r) => r.category === currentFilter);
+  } else if (currentFilter === "fav") {
     list = list.filter((r) => r.isFavorite || r.favorite || r.isFav);
-  } else if (filter === "all") {
+  } else if (currentFilter === "all") {
     list = allRecipes;
   }
 
@@ -54,7 +55,8 @@ if (filterBtns && filterBtns.length > 0) {
     }
 
     btn.addEventListener("click", () => {
-      filter = btn.dataset.filter;
+      // 💡 修正：將 filter 改為 currentFilter
+      currentFilter = btn.dataset.filter;
       filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
       render();
     });
@@ -108,9 +110,10 @@ const modalCardBody = document.querySelector("#modalCardBody");
 
 function triggerRandomRecipe() {
   let targetRecipes = allRecipes || [];
-  if (filter === "sweet" || filter === "savory") {
-    targetRecipes = targetRecipes.filter(r => r.category === filter);
-  } else if (filter === "fav") {
+  // 💡 修正：將 filter 改為 currentFilter
+  if (currentFilter === "sweet" || currentFilter === "savory") {
+    targetRecipes = targetRecipes.filter(r => r.category === currentFilter);
+  } else if (currentFilter === "fav") {
     targetRecipes = targetRecipes.filter(r => r.isFavorite);
   }
 
