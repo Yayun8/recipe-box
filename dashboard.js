@@ -12,7 +12,7 @@ const countLabel = qs("#countLabel");
 const filterBtns = qsa("[data-filter]");
 
 function render() {
-  const keyword = searchInput.value.trim().toLowerCase();
+  const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
   let list = allRecipes;
 
   if (filter === "sweet" || filter === "savory") {
@@ -26,13 +26,18 @@ function render() {
     );
   }
 
-  countLabel.textContent = allRecipes.length;
-  grid.innerHTML = "";
-  if (!list.length) {
-    grid.innerHTML = `<div class="empty-state">目前沒有收藏的食譜。<br><a href="edit_recipe.html">新增或去首頁瀏覽 →</a></div>`;
-    return;
+  if (countLabel) {
+    countLabel.textContent = allRecipes.length;
   }
-  list.forEach((r) => grid.appendChild(renderRecipeCard(r)));
+  
+  if (grid) {
+    grid.innerHTML = "";
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty-state">目前沒有收藏的食譜。<br><a href="edit_recipe.html">新增或去首頁瀏覽 →</a></div>`;
+      return;
+    }
+    list.forEach((r) => grid.appendChild(renderRecipeCard(r)));
+  }
 }
 
 filterBtns.forEach((btn) => {
@@ -51,18 +56,26 @@ filterBtns.forEach((btn) => {
   }
 });
 
-grid.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-fav-id]");
-  if (!btn) return;
-  e.preventDefault();
-  const id = btn.dataset.favId;
-  const recipe = allRecipes.find((r) => r.id === id);
-  if (!recipe) return;
-  toggleFavorite(id, !recipe.isFavorite).catch((err) => console.error(err));
-});
+if (grid) {
+  grid.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-fav-id]");
+    if (!btn) return;
+    e.preventDefault();
+    const id = btn.dataset.favId;
+    const recipe = allRecipes.find((r) => r.id === id);
+    if (!recipe) return;
+    toggleFavorite(id, !recipe.isFavorite).catch((err) => console.error(err));
+  });
+}
 
-searchInput.addEventListener("input", debounce(render, 150));
-initSyncBadge(qs("#syncBadge"));
+if (searchInput) {
+  searchInput.addEventListener("input", debounce(render, 150));
+}
+
+const syncBadgeEl = qs("#syncBadge");
+if (syncBadgeEl) {
+  initSyncBadge(syncBadgeEl);
+}
 
 subscribeRecipes((recipes) => {
   allRecipes = recipes;
