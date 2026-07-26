@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-mode="sweet">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>我的食譜庫 · 食譜箱 RecipeBox</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-mode="sweet">
+
+  <header class="topbar">
+    <div class="brand">食譜箱 <span>RecipeBox</span></div>
+    <nav class="nav-links">
+      <a href="index.html">首頁</a>
+      <a href="dashboard.html" class="active">我的食譜庫</a>
+      <a href="edit_recipe.html">新增食譜</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar" style="border-bottom:none; margin-bottom:16px;">
+      <button class="tag-pill" data-filter="all">全部</button>
+      <button class="tag-pill" data-filter="sweet">🍰 甜食</button>
+      <button class="tag-pill" data-filter="savory">🍳 鹹食</button>
+      <button class="tag-pill" data-filter="fav">★ 收藏</button>
+      <button id="randomBtn" class="btn btn-ghost" style="padding: 8px 16px;">🎲 隨機推薦</button>
+      <input class="search-input" id="searchInput" type="search" placeholder="搜尋…" style="max-width:220px;" />
+      <a class="btn btn-accent" href="edit_recipe.html" style="margin-left:auto;">＋ 新增食譜</a>
+      <span class="sync-badge" id="syncBadge"><span class="dot"></span><span class="label">同步中…</span></span>
+    </div>
+
+    <section class="recipe-grid" id="recipeGrid" aria-live="polite">
+      <div class="empty-state">正在讀取食譜…</div>
+    </section>
+  </main>
+
+  <footer class="page-foot">RecipeBox · 共 <span id="countLabel">0</span> 道食譜</footer>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

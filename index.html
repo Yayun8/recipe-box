@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-mode="sweet">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Recipe</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-mode="sweet">
+
+  <header class="topbar">
+    <div class="brand"><span>Recipe</span></div>
+    <nav class="nav-links">
+      <a href="index.html" class="active">首頁</a>
+      <a href="dashboard.html">我的收藏</a>
+      <a href="edit_recipe.html">新增食譜</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <!-- 加上「全部」按鈕 -->
+<div class="tab-switcher" role="tablist" aria-label="甜食或鹹食模式">
+  <!-- 1. 新增的「全部」按鈕 -->
+  <button class="tab-divider" data-tab="all" role="tab">
+    <span class="tab-tag">Mode / 00</span>
+    🌐 全部
+  </button>
+
+  <!-- 原本的甜食按鈕 -->
+  <button class="tab-divider" data-tab="sweet" role="tab">
+    <span class="tab-tag">Mode / 01</span>
+    🍰 甜食
+  </button>
+  
+  <!-- 原本的鹹食按鈕 -->
+  <button class="tab-divider" data-tab="savory" role="tab">
+    <span class="tab-tag">Mode / 02</span>
+    🍳 鹹食
+  </button>
+</div>
+
+    <div class="toolbar">
+      <input class="search-input" id="searchInput" type="search" placeholder="搜尋食譜名稱或標籤…" />
+      <div id="tagPills" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+      <button class="btn btn-accent btn-random" id="randomBtn">🎲 隨機推薦今天吃什麼</button>
+      <span class="sync-badge" id="syncBadge"><span class="dot"></span><span class="label">同步中…</span></span>
+    </div>
+
+    <section class="recipe-grid" id="recipeGrid" aria-live="polite">
+      <div class="empty-state">正在讀取食譜…</div>
+    </section>
+
+  </main>
+
+  <footer class="page-foot">RecipeBox · Firebase Firestore + IndexedDB 離線快取</footer>
+
+  <script type="module" src="index.js"></script>
+</body>
+</html>

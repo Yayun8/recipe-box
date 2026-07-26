@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-mode="sweet">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>食譜詳情 · 食譜箱 RecipeBox</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-mode="sweet">
+
+  <header class="topbar">
+    <div class="brand">食譜箱 <span>RecipeBox</span></div>
+    <nav class="nav-links">
+      <a href="index.html">首頁</a>
+      <a href="dashboard.html">我的食譜庫</a>
+      <a href="edit_recipe.html">新增食譜</a>
+    </nav>
+  </header>
+
+  <main class="wrap" style="max-width: 1000px; margin-top: 40px;">
+    <a class="back-link" href="dashboard.html" style="display:inline-block; margin-bottom: 16px;">← 回到食譜庫</a>
+
+    <!-- 左右分欄主卡片 -->
+    <div class="form-card" style="display: grid; grid-template-columns: 360px 1fr; gap: 40px; align-items: start;">
+      
+      <!-- 左側：圖片與標籤 -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div id="recipeImageContainer"></div>
+        <div>
+          <label style="font-size: 12px; font-family: var(--font-mono); color: var(--ink-soft); margin-bottom: 8px; display: block;">食譜標籤</label>
+          <div id="tags" class="tags"></div>
+        </div>
+      </div>
+
+      <!-- 右側：標題、按鈕、食材與做法 -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+          <h1 id="title" style="font-family: var(--font-display); font-size: 32px; margin: 0; line-height: 1.2;"></h1>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="favBtn" class="fav-btn" style="font-size: 22px; background: none; border: none; cursor: pointer;">☆</button>
+            <a id="editLink" class="btn btn-ghost" style="padding: 6px 14px; font-size: 13px;">編輯</a>
+            <button id="deleteBtn" class="btn" style="padding: 6px 14px; font-size: 13px; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">刪除</button>
+          </div>
+        </div>
+
+        <div id="recipeSourceContainer"></div>
+
+        <hr style="border: none; border-top: 1px solid var(--line); margin: 0;" />
+
+        <div>
+          <h3 style="font-size: 18px; margin-bottom: 12px; font-family: var(--font-display);">食材</h3>
+          <ul id="ingredientList" class="ingredient-list"></ul>
+        </div>
+
+        <div>
+          <h3 style="font-size: 18px; margin-bottom: 12px; font-family: var(--font-display);">做法步驟</h3>
+          <ol id="stepsList" class="steps-list"></ol>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="page-foot">RecipeBox · 儲存後會自動同步到 Firestore 雲端</footer>
+
+  <script type="module" src="detail.js"></script>
+</body>
+</html>

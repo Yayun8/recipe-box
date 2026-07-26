@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-mode="sweet">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>新增食譜 · 食譜箱 RecipeBox</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-mode="sweet">
+
+  <header class="topbar">
+    <div class="brand">食譜箱 <span>RecipeBox</span></div>
+    <nav class="nav-links">
+      <a href="index.html">首頁</a>
+      <a href="dashboard.html">我的食譜庫</a>
+      <a href="edit_recipe.html" class="active">新增食譜</a>
+    </nav>
+  </header>
+
+  <main class="wrap" style="max-width:720px;">
+    <h1 id="pageTitle" style="font-family: var(--font-display); font-size:28px; margin-bottom: 20px;">新增食譜</h1>
+
+    <form class="form-card" id="recipeForm">
+
+      <div class="field">
+        <label>這是甜食還是鹹食？</label>
+        <div class="cat-choice">
+          <label>
+            <input type="radio" name="category" value="sweet" checked />
+            <span>🍰 甜食</span>
+          </label>
+          <label>
+            <input type="radio" name="category" value="savory" />
+            <span>🍳 鹹食</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="titleInput">食譜名稱</label>
+        <input id="titleInput" type="text" required placeholder="例如：蜂蜜檸檬瑪德蓮" />
+      </div>
+
+      <!-- 新增：食譜圖片連結輸入欄位 -->
+      <div class="field">
+        <label for="imageInput">食譜圖片網址 (URL)</label>
+        <input id="imageInput" type="url" placeholder="例如：https://example.com/photo.jpg" />
+      </div>
+      <!-- 2. 食譜原始來源網址 -->
+      <div class="field">
+        <label for="sourceUrlInput">食譜原始網址 (來源出處)</label>
+        <input id="sourceUrlInput" type="url" placeholder="例如：https://cookpad.com/tw/recipes/..." />
+      </div>
+
+      <div class="field">
+        <label for="tagsInput">標籤 (用逗號分隔)</label>
+        <input id="tagsInput" type="text" placeholder="例如：烘焙, 免烤箱, 早餐" />
+      </div>
+
+      <!-- 將原本的食材輸入區塊改為： -->
+<div class="field">
+  <label for="ingredientsTextarea">食材（可直接輸入文字，每行一項）</label>
+  <textarea id="ingredientsTextarea" placeholder="1. oreo 100g&#10;2. 奶油 50g&#10;3. 糖 適量" style="min-height: 120px;"></textarea>
+</div>
+
+      <!-- 改良：做法步驟改為單一大型文字框 -->
+      <div class="field">
+        <label for="stepsTextarea">做法步驟 (可直接輸入文字或換行)</label>
+        <textarea id="stepsTextarea" placeholder="1. 準備材料...&#10;2. 混合搅拌...&#10;3. 送入烤箱..." style="min-height: 120px;"></textarea>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:24px;">
+        <button type="submit" class="btn btn-accent" id="submitBtn">儲存食譜</button>
+        <a class="btn btn-ghost" href="dashboard.html">取消</a>
+      </div>
+      <div class="status-msg" id="statusMsg"></div>
+    </form>
+  </main>
+
+  <footer class="page-foot">RecipeBox · 儲存後會自動同步到 Firestore 雲端</footer>
+
+  <script type="module" src="edit_recipe.js"></script>
+</body>
+</html>

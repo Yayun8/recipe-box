@@ -1,0 +1,578 @@
+/* ==========================================================================
+   食譜箱 RecipeBox — 共用設計系統
+   概念:把每道食譜當成一張「食譜箱索引卡」,甜食/鹹食是卡片盒裡的
+   兩個分隔頁籤(divider tab)。翻頁籤 = 切換模式。
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* 清新淡藍色系 */
+  --paper: #f0f4f8;          /* 極淡的清爽天藍底色 */
+  --paper-raised: #ffffff;   /* 卡片底色 */
+  --ink: #202d3d;            /* 深靛藍主文字 */
+  --ink-soft: #596a7d;       /* 次要文字 */
+  --line: #cbd5e1;           /* 柔和藍灰分隔線 */
+
+  --sweet: #e16b75;          /* 柔和櫻桃粉（甜食） */
+  --sweet-soft: #fce8ea;
+  --sweet-deep: #9e3842;
+
+  --savory: #3b82f6;         /* 清新天空藍（鹹食） */
+  --savory-soft: #e0f2fe;
+  --savory-deep: #1d4ed8;
+
+  --accent: var(--sweet);
+  --accent-soft: var(--sweet-soft);
+  --accent-deep: var(--sweet-deep);
+
+  --shadow: 0 1px 0 rgba(54, 42, 34, 0.06), 0 8px 20px -12px rgba(54, 42, 34, 0.25);
+  --radius: 14px;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Work Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-mode="savory"] {
+  --accent: var(--savory);
+  --accent-soft: var(--savory-soft);
+  --accent-deep: var(--savory-deep);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  transition: background 0.4s ease;
+}
+
+/* 米紙上的細顆粒質感,避免整片純色太平 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(rgba(54,42,34,0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  z-index: 0;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px 64px;
+}
+
+/* ---------- 頂部導覽 ---------- */
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 24px 30px;
+  background-color: #003060; /* 設定深藍色背景 */
+  color: #ffffff; /* 讓導覽列文字變成白色 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 確保深藍色背景下的文字與連結顏色好看 */
+.topbar .brand {
+  color: #ffffff;
+}
+.topbar .brand span { 
+  color: #93c5fd; /* 讓 RecipeBox 呈現清爽的淺藍色 */
+}
+
+.topbar .nav-links {
+  color: #e2e8f0;
+}
+.topbar .nav-links a { 
+  border-bottom: 1px solid transparent; 
+  padding-bottom: 2px; 
+  color: #e2e8f0;
+}
+.topbar .nav-links a:hover, 
+.topbar .nav-links a.active { 
+  color: #ffffff; 
+  border-color: #93c5fd; 
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+.brand span { color: var(--accent); transition: color 0.3s ease; }
+
+.nav-links {
+  display: flex;
+  gap: 18px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.nav-links a { border-bottom: 1px solid transparent; padding-bottom: 2px; }
+.nav-links a:hover, .nav-links a.active { color: var(--ink); border-color: var(--accent); }
+
+/* ---------- 甜/鹹 分隔頁籤切換器(簽名元件) ---------- */
+.tab-switcher {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0 30px;
+}
+
+.tab-divider {
+  position: relative;
+  flex: 1;
+  border: none;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 14px 10px 22px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--ink-soft);
+  text-align: left;
+  transition: transform 0.25s ease, color 0.25s ease, background 0.25s ease;
+  transform: translateY(6px);
+}
+
+.tab-divider .tab-tag {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 3px;
+}
+
+.tab-divider[data-tab="sweet"].is-active {
+  color: var(--sweet-deep);
+  background: var(--sweet-soft);
+  border-color: var(--sweet);
+  transform: translateY(0);
+  z-index: 2;
+  box-shadow: var(--shadow);
+}
+.tab-divider[data-tab="savory"].is-active {
+  color: var(--savory-deep);
+  background: var(--savory-soft);
+  border-color: var(--savory);
+  transform: translateY(0);
+  z-index: 2;
+  box-shadow: var(--shadow);
+}
+
+.tab-switcher::after {
+  content: "";
+  display: block;
+}
+
+/* ---------- 工具列:搜尋 + 隨機推薦 ---------- */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 22px;
+  margin-bottom: 28px;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 180px;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+.search-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.tag-pill {
+  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: 100px;
+  padding: 7px 13px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+.tag-pill.is-active { background: var(--accent); border-color: var(--accent); color: #fffaf1; }
+
+.btn {
+  border-radius: 10px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper-raised);
+  padding: 11px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+.btn:hover { opacity: 0.85; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn-accent {
+  border-color: var(--accent-deep);
+  background: var(--accent);
+  color: #fffaf1;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.btn-random {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- 食譜卡片網格(索引卡樣式) ---------- */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.recipe-card {
+  position: relative;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 16px 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 160px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.recipe-card:hover { transform: translateY(-3px); }
+
+/* 卡片右上角的分類頁籤角 */
+.recipe-card::before {
+  content: attr(data-cat-label);
+  position: absolute;
+  top: -1px;
+  right: 14px;
+  transform: translateY(-55%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: var(--cat-color, var(--accent));
+  color: #fffaf1;
+}
+
+.recipe-card[data-category="sweet"] { --cat-color: var(--sweet); }
+.recipe-card[data-category="savory"] { --cat-color: var(--savory); }
+
+.recipe-card h3 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  margin: 4px 0 0;
+  line-height: 1.3;
+}
+
+.recipe-card .tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.recipe-card .tags span { border: 1px solid var(--line); padding: 2px 7px; border-radius: 100px; }
+
+.recipe-card .card-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.fav-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--line);
+  line-height: 1;
+}
+.fav-btn.is-fav { color: var(--accent); }
+
+.empty-state {
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+  grid-column: 1 / -1;
+}
+.empty-state a { color: var(--accent-deep); text-decoration: underline; }
+
+/* ---------- 詳細頁 ---------- */
+.detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.detail-head h1 {
+  font-family: var(--font-display);
+  font-size: 34px;
+  margin: 6px 0 8px;
+}
+.back-link { font-size: 13px; color: var(--ink-soft); }
+.back-link:hover { color: var(--ink); }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 36px;
+}
+@media (max-width: 720px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .tab-switcher { gap: 4px; }
+}
+
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px dashed var(--line);
+}
+.ingredient-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 14.5px;
+}
+.ingredient-list li b { font-family: var(--font-mono); font-weight: 500; color: var(--ink-soft); }
+
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step;
+}
+.steps-list li {
+  counter-increment: step;
+  position: relative;
+  padding: 4px 0 22px 40px;
+  font-size: 15px;
+}
+.steps-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 表單(新增/編輯) ---------- */
+.form-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+.field input, .field textarea, .field select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.field textarea { resize: vertical; min-height: 70px; }
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.cat-choice { display: flex; gap: 10px; }
+.cat-choice label {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--font-body);
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.cat-choice input { display: none; }
+.cat-choice input:checked + span { font-weight: 600; }
+.cat-choice label:has(input[value="sweet"]:checked) { border-color: var(--sweet); background: var(--sweet-soft); color: var(--sweet-deep); }
+.cat-choice label:has(input[value="savory"]:checked) { border-color: var(--savory); background: var(--savory-soft); color: var(--savory-deep); }
+
+.dynamic-rows .row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.dynamic-rows .row input { flex: 1; }
+.row-del {
+  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: 8px;
+  width: 38px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.add-row-btn {
+  border: 1px dashed var(--line);
+  background: transparent;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  width: 100%;
+}
+
+.status-msg {
+  font-size: 13px;
+  margin-top: 10px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+}
+.status-msg.is-error { color: var(--sweet-deep); }
+.status-msg.is-ok { color: var(--savory-deep); }
+
+.sync-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sync-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+.sync-badge.is-online .dot { background: var(--savory); }
+.sync-badge.is-offline .dot { background: var(--sweet); }
+
+footer.page-foot {
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 12px;
+  padding: 40px 0 10px;
+  font-family: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+.tag-capsule {
+  display: inline-block;
+  padding: 4px 12px;
+  margin: 2px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 50px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--ink-soft);
+}
+/* 強制覆蓋瀏覽器預設樣式，讓食材 textarea 背景與步驟區塊完全一致 */
+textarea#ingredientsTextarea {
+    /* 1. 背景色 (保持不變) */
+    background-color: var(--paper-raised, #f5f7f9) !important;
+    
+    /* 2. 圓角 (保持不變) */
+    border-radius: 12px !important;
+    
+    /* 3. !!! 重點修正：邊框 !!!
+       將原本的細黑框改成與下面區塊一樣柔和且有厚度的樣式
+       (這裡使用與下面區塊近似的淺灰色變數與寬度) */
+    border: 1px solid var(--line, #e0e6ed) !important;
+    
+    /* 4. 內距與字型 (保持不變) */
+    padding: 12px !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: 1.5 !important;
+    
+    /* 5. 確保寬度佔滿並允許使用者手動調整高度 */
+    width: 100% !important;
+    box-sizing: border-box !important;
+    resize: vertical !important;
+    
+    /* 6. 拿掉可能存在的陰影或高光 */
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* 聚焦時的狀態 (選配，讓體驗更好) */
+textarea#ingredientsTextarea:focus {
+    border-color: var(--primary, #3b82f6) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+/* 讓切換按鈕擁有平滑的過渡動畫，點起來才不會卡 */
+.tab-divider {
+    transition: all 0.25s ease-in-out !important;
+}
+
+/* 當「全部」被選中 (is-active) 時，套用跟甜食一樣的粉紅色浮起外觀 */
+.tab-divider[data-tab="all"].is-active,
+.tab-divider[data-tab="all"][aria-selected="true"] {
+    background-color: #ebf0b1 !important; /* 跟甜食一樣的粉紅背景色，可依你的甜食色碼調整 */
+    border-color: #eff538 !important;
+    transform: translateY(-2px); /* 浮起來的感覺 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

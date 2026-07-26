@@ -1,0 +1,96 @@
+import { qs, qsa, renderRecipeCard, debounce, initSyncBadge, setMode } from "./app.js";
+import { subscribeRecipes, toggleFavorite } from "./db.js";
+
+setMode("sweet"); // dashboard 走中性配色,固定甜食主色即可
+
+let allRecipes = [];
+let filter = "fav"; // 👉 改這裡：預設為收藏
+
+const grid = qs("#recipeGrid");
+const searchInput = qs("#searchInput");
+const countLabel = qs("#countLabel");
+const filterBtns = qsa("[data-filter]");
+
+function render() {
+  const keyword = searchInput.value.trim().toLowerCase();
+  let list = allRecipes;
+
+  if (filter === "sweet" || filter === "savory") {
+    list = list.filter((r) => r.category === filter);
+  } else if (filter === "fav") {
+    list = list.filter((r) => r.isFavorite);
+  }
+  if (keyword) {
+    list = list.filter((r) =>
+      [r.title, ...(r.tags || [])].join(" ").toLowerCase().includes(keyword)
+    );
+  }
+
+  countLabel.textContent = allRecipes.length;
+  grid.innerHTML = "";
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state">目前沒有收藏的食譜。<br><a href="edit_recipe.html">新增或去首頁瀏覽 →</a></div>`;
+    return;
+  }
+  list.forEach((r) => grid.appendChild(renderRecipeCard(r)));
+}
+
+filterBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    filter = btn.dataset.filter;
+    filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+    render();
+  });
+});
+
+// 👉 改這裡：讓頁面載入時，預設把「收藏」按鈕加上 is-active 樣式
+filterBtns.forEach((btn) => {
+  if (btn.dataset.filter === "fav") {
+    btn.classList.add("is-active");
+  } else {
+    btn.classList.remove("is-active");
+  }
+});
+
+grid.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-fav-id]");
+  if (!btn) return;
+  e.preventDefault();
+  const id = btn.dataset.favId;
+  const recipe = allRecipes.find((r) => r.id === id);
+  if (!recipe) return;
+  toggleFavorite(id, !recipe.isFavorite).catch((err) => console.error(err));
+});
+
+searchInput.addEventListener("input", debounce(render, 150));
+initSyncBadge(qs("#syncBadge"));
+
+subscribeRecipes((recipes) => {
+  allRecipes = recipes;
+  render();
+});
+
+const randomBtn = document.querySelector("#randomBtn");
+
+if (randomBtn) {
+  randomBtn.addEventListener("click", () => {
+    let targetRecipes = allRecipes || [];
+    if (filter === "sweet" || filter === "savory") {
+      targetRecipes = targetRecipes.filter(r => r.category === filter);
+    } else if (filter === "fav") {
+      targetRecipes = targetRecipes.filter(r => r.isFavorite);
+    }
+
+    if (targetRecipes.length === 0) {
+      alert("目前這個分類沒有食譜可以推薦！");
+      return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * targetRecipes.length);
+    const selected = targetRecipes[randomIndex];
+    
+    if (selected && selected.id) {
+      window.location.href = `detail.html?id=${selected.id}`;
+    }
+  });
+}
