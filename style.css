@@ -576,3 +576,16 @@ textarea#ingredientsTextarea:focus {
     transform: translateY(-2px); /* 浮起來的感覺 */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+/* 預設或全部模式下（data-mode="all" 或沒有特別指定時），隨機按鈕的專屬顏色 */
+:root:not([data-mode="sweet"]):not([data-mode="savory"]) #randomBtn,
+[data-mode="all"] #randomBtn {
+  background-color: #4f46e5 !important; /* 這裡可以改成你想要的按鈕背景色，例如沉穩的靛藍色 */
+  border-color: #4338ca !important;
+  color: #ffffff !important;
+}
+
+/* 滑鼠懸停時的微調 */
+:root:not([data-mode="sweet"]):not([data-mode="savory"]) #randomBtn:hover,
+[data-mode="all"] #randomBtn:hover {
+  opacity: 0.9 !important;
+}
