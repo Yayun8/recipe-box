@@ -13,12 +13,7 @@ export function qsa(sel, root = document) {
 
 /** 取得 / 記住目前甜鹹模式(存在 localStorage,只是 UI 偏好,非食譜資料) */
 export function getMode() {
-  const saved = localStorage.getItem("recipebox_mode");
-  // 如果從來沒設定過，或是你想強制把舊的 sweet 改成 all，可以這樣做：
-  if (!saved || saved === "sweet") {
-    return "all";
-  }
-  return saved;
+  return localStorage.getItem("recipebox_mode") || "sweet"; // 保留原本的記憶功能
 }
 export function setMode(mode) {
   localStorage.setItem("recipebox_mode", mode);
