@@ -98,9 +98,23 @@ if (randomBtn) {
           <h4 style="color: #666; margin-bottom: 8px; text-align: center;">✨ 今日隨機推薦</h4>
         </div>
       `;
-      // 直接使用你們原本專案的 renderRecipeCard 函式來產生卡片，完美保持一致！
+
+      // 1. 利用原本的函式產生卡片
       const cardElement = renderRecipeCard(r);
-      container.appendChild(cardElement);
+
+      // 2. 因為原本產出來是 <a> 標籤會直接跳轉，我們把它改成 <div>，讓它乖乖留在首頁
+      const divCard = document.createElement("div");
+      divCard.className = cardElement.className;
+      divCard.style.cssText = "cursor: pointer; position: relative;"; // 讓滑鼠移上去變成手指，保持排版
+      divCard.innerHTML = cardElement.innerHTML;
+
+      // 3. 只有當使用者「主動點擊」這張卡片時，才導向詳細頁
+      divCard.addEventListener("click", () => {
+        window.location.href = `detail.html?id=${r.id}`;
+      });
+
+      // 4. 清空容器並把新卡片放進去
+      container.querySelector("div").appendChild(divCard);
     }
   });
 }
