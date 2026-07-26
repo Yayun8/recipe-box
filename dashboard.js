@@ -88,16 +88,33 @@ if (randomBtn) {
 
     // 隨機抽出一道菜
     const randomIndex = Math.floor(Math.random() * targetRecipes.length);
-    const selected = targetRecipes[randomIndex];
+    const r = targetRecipes[randomIndex];
 
-    // 讓畫面跳出一個確認視窗（或是用自訂卡片），這裡先用 confirm 讓你快速測試
-    if (selected && selected.id) {
-      const isConfirmed = confirm(`✨ 抽到今天推薦：「${selected.name || '這道菜'}」\n\n要查看這道菜的詳細食譜嗎？`);
-      
-      // 只有當使用者點擊「確定」時，才會跳轉到詳細頁
-      if (isConfirmed) {
-        window.location.href = `detail.html?id=${selected.id}`;
-      }
+    // 找到首頁放卡片的容器
+    const container = document.querySelector("#randomCardContainer");
+    if (container && r) {
+      // 判斷分類標籤的文字與顏色
+      let categoryText = "";
+      if (r.category === "sweet") categoryText = '<span class="tag sweet">甜食</span>';
+      else if (r.category === "savory") categoryText = '<span class="tag savory">鹹食</span>';
+
+      // 產生跟你平常常見的食譜卡片一模一樣的 HTML
+      container.innerHTML = `
+        <div style="margin: 20px auto; max-width: 300px;">
+          <h4 style="color: #666; margin-bottom: 8px;">✨ 今日隨機推薦</h4>
+          <div class="recipe-card" onclick="window.location.href='detail.html?id=${r.id}'" style="cursor: pointer; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative;">
+            ${categoryText}
+            <img src="${r.image || 'default.jpg'}" alt="${r.name}" style="width: 100%; height: 180px; object-fit: cover;">
+            <div style="padding: 15px;">
+              <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #1a2b4c;">${r.name}</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; color: #666; font-size: 14px;">
+                <span>${r.steps ? r.steps.length : 0} 個步驟</span>
+                <span>⭐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
     }
   });
 }
