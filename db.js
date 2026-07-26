@@ -157,9 +157,11 @@ export async function deleteRecipe(id) {
 }
 
 /** 切換收藏狀態 */
+/** 切換收藏狀態 */
 export async function toggleFavorite(id, next) {
+  console.log(`正在更新食譜 ${id} 的收藏狀態為:`, next);
   const ref = doc(db, COLLECTION_NAME, id);
-  return updateDoc(ref, { isFavorite: next, updatedAt: serverTimestamp() });
+  return updateDoc(ref, { isFavorite: Boolean(next), updatedAt: serverTimestamp() });
 }
 
 /** 直接從本機快取取一筆(給 detail.html 離線時用) */
