@@ -1,7 +1,7 @@
 import { qs, qsa, renderRecipeCard, debounce, initSyncBadge, setMode } from "./app.js";
 import { subscribeRecipes, toggleFavorite } from "./db.js";
 
-setMode("sweet"); // dashboard 走中性配色,固定甜食主色即可
+setMode("sweet"); // dashboard 走中性配色
 
 let allRecipes = [];
 let filter = "fav"; // 預設為收藏
@@ -19,7 +19,10 @@ function render() {
     list = list.filter((r) => r.category === filter);
   } else if (filter === "fav") {
     list = list.filter((r) => r.isFavorite);
+  } else if (filter === "all") {
+    list = allRecipes; // 「全部」顯示所有食譜
   }
+
   if (keyword) {
     list = list.filter((r) =>
       [r.title, ...(r.tags || [])].join(" ").toLowerCase().includes(keyword)
@@ -33,36 +36,40 @@ function render() {
   if (grid) {
     grid.innerHTML = "";
     if (!list.length) {
-      grid.innerHTML = `<div class="empty-state">目前沒有收藏的食譜。<br><a href="edit_recipe.html">新增或去首頁瀏覽 →</a></div>`;
+      grid.innerHTML = `<div class="empty-state">目前這個分類沒有食譜。<br><a href="edit_recipe.html">新增或去首頁瀏覽 →</a></div>`;
       return;
     }
     list.forEach((r) => grid.appendChild(renderRecipeCard(r)));
   }
 }
 
-filterBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    filter = btn.dataset.filter;
-    filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
-    render();
-  });
-});
-
+// 綁定分類按鈕點擊事件
 if (filterBtns && filterBtns.length > 0) {
   filterBtns.forEach((btn) => {
+    // 頁面載入時，預設把「收藏」按鈕加上 is-active
+    if (btn.dataset.filter === "fav") {
+      btn.classList.add("is-active");
+    } else {
+      btn.classList.remove("is-active");
+    }
+
     btn.addEventListener("click", () => {
       filter = btn.dataset.filter;
       filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
       render();
     });
   });
+}
 
-  filterBtns.forEach((btn) => {
-    if (btn.dataset.filter === "fav") {
-      btn.classList.add("is-active");
-    } else {
-      btn.classList.remove("is-active");
-    }
+if (grid) {
+  grid.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-fav-id]");
+    if (!btn) return;
+    e.preventDefault();
+    const id = btn.dataset.favId;
+    const recipe = allRecipes.find((r) => r.id === id);
+    if (!recipe) return;
+    toggleFavorite(id, !recipe.isFavorite).catch((err) => console.error(err));
   });
 }
 
@@ -135,7 +142,7 @@ if (randomBtn) {
 
 if (closeModalBtn) {
   closeModalBtn.addEventListener("click", () => {
-    randomModal.style.display = "none";
+    if (randomModal) randomModal.style.display = "none";
   });
 }
 
