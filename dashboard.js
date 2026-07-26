@@ -4,7 +4,7 @@ import { subscribeRecipes, toggleFavorite } from "./db.js";
 setMode("sweet"); // dashboard 走中性配色,固定甜食主色即可
 
 let allRecipes = [];
-let filter = "fav"; // 👉 改這裡：預設為收藏
+let filter = "fav"; // 預設為收藏
 
 const grid = qs("#recipeGrid");
 const searchInput = qs("#searchInput");
@@ -43,7 +43,6 @@ filterBtns.forEach((btn) => {
   });
 });
 
-// 👉 改這裡：讓頁面載入時，預設把「收藏」按鈕加上 is-active 樣式
 filterBtns.forEach((btn) => {
   if (btn.dataset.filter === "fav") {
     btn.classList.add("is-active");
@@ -70,51 +69,73 @@ subscribeRecipes((recipes) => {
   render();
 });
 
+// ==============================
+// 隨機推薦彈出視窗相關邏輯
+// ==============================
 const randomBtn = document.querySelector("#randomBtn");
+const randomModal = document.querySelector("#randomModal");
+const closeModalBtn = document.querySelector("#closeModalBtn");
+const drawAgainBtn = document.querySelector("#drawAgainBtn");
+const modalCardBody = document.querySelector("#modalCardBody");
+
+function triggerRandomRecipe() {
+  let targetRecipes = allRecipes || [];
+  if (filter === "sweet" || filter === "savory") {
+    targetRecipes = targetRecipes.filter(r => r.category === filter);
+  } else if (filter === "fav") {
+    targetRecipes = targetRecipes.filter(r => r.isFavorite);
+  }
+
+  if (targetRecipes.length === 0) {
+    alert("目前這個分類沒有食譜可以推薦！");
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * targetRecipes.length);
+  const r = targetRecipes[randomIndex];
+
+  if (modalCardBody && r) {
+    const imgSrc = r.image ? r.image : "";
+    const stepsCount = r.steps ? r.steps.length : 0;
+    const title = r.title || "未命名食譜";
+
+    modalCardBody.innerHTML = `
+      <div onclick="window.location.href='detail.html?id=${r.id}'" style="cursor: pointer; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        ${imgSrc ? `<div style="width: 100%; height: 180px; overflow: hidden;"><img src="${imgSrc}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;"></div>` : ""}
+        <div style="padding: 15px;">
+          <h3 style="font-size: 18px; margin: 0 0 8px 0; color: #1a2b4c;">${title}</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; color: #666; font-size: 14px;">
+            <span>${stepsCount} 個步驟</span>
+            <span style="color: #f39c12;">⭐ 點擊查看詳細做法</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (randomModal) {
+    randomModal.style.display = "flex";
+  }
+}
 
 if (randomBtn) {
-  randomBtn.addEventListener("click", () => {
-    let targetRecipes = allRecipes || [];
-    if (filter === "sweet" || filter === "savory") {
-      targetRecipes = targetRecipes.filter(r => r.category === filter);
-    } else if (filter === "fav") {
-      targetRecipes = targetRecipes.filter(r => r.isFavorite);
-    }
+  randomBtn.addEventListener("click", triggerRandomRecipe);
+}
 
-    if (targetRecipes.length === 0) {
-      alert("目前這個分類沒有食譜可以推薦！");
-      return;
-    }
+if (closeModalBtn) {
+  closeModalBtn.addEventListener("click", () => {
+    randomModal.style.display = "none";
+  });
+}
 
-    // 隨機抽出一道菜
-    const randomIndex = Math.floor(Math.random() * targetRecipes.length);
-    const r = targetRecipes[randomIndex];
+if (drawAgainBtn) {
+  drawAgainBtn.addEventListener("click", triggerRandomRecipe);
+}
 
-    // 找到首頁放卡片的容器
-    const container = document.querySelector("#randomCardContainer");
-    if (container && r) {
-      container.innerHTML = `
-        <div style="margin: 20px auto; max-width: 300px;">
-          <h4 style="color: #666; margin-bottom: 8px; text-align: center;">✨ 今日隨機推薦</h4>
-        </div>
-      `;
-
-      // 1. 利用原本的函式產生卡片
-      const cardElement = renderRecipeCard(r);
-
-      // 2. 因為原本產出來是 <a> 標籤會直接跳轉，我們把它改成 <div>，讓它乖乖留在首頁
-      const divCard = document.createElement("div");
-      divCard.className = cardElement.className;
-      divCard.style.cssText = "cursor: pointer; position: relative;"; // 讓滑鼠移上去變成手指，保持排版
-      divCard.innerHTML = cardElement.innerHTML;
-
-      // 3. 只有當使用者「主動點擊」這張卡片時，才導向詳細頁
-      divCard.addEventListener("click", () => {
-        window.location.href = `detail.html?id=${r.id}`;
-      });
-
-      // 4. 清空容器並把新卡片放進去
-      container.querySelector("div").appendChild(divCard);
+if (randomModal) {
+  randomModal.addEventListener("click", (e) => {
+    if (e.target === randomModal) {
+      randomModal.style.display = "none";
     }
   });
 }
