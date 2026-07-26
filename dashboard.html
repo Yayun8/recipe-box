@@ -29,7 +29,11 @@
       <span class="sync-badge" id="syncBadge"><span class="dot"></span><span class="label">同步中…</span></span>
     </div>
 
-    <!-- 隨機推薦卡片顯示區塊移到這裡 -->
+    <!-- 💡 這裡就是剛剛少掉的食譜卡片顯示網格！ -->
+    <section class="recipe-grid" id="recipeGrid" aria-live="polite">
+      <div class="empty-state">正在讀取食譜…</div>
+    </section>
+
     <!-- 隨機推薦彈出視窗 Modal -->
     <div id="randomModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
       <div style="background: #fff; width: 90%; max-width: 400px; border-radius: 16px; padding: 20px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
