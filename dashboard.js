@@ -86,21 +86,18 @@ if (randomBtn) {
       return;
     }
 
-    // 隨機挑選一筆
+    // 隨機抽出一道菜
     const randomIndex = Math.floor(Math.random() * targetRecipes.length);
     const selected = targetRecipes[randomIndex];
 
-    // 假設你在首頁準備了一個顯示隨機推薦的容器，例如 id="randomResultCard"
-    const randomCardContainer = document.querySelector("#randomResultCard");
-    
-    if (selected && randomCardContainer) {
-      // 產生卡片 HTML，點擊卡片才會跳轉到 detail.html
-      randomCardContainer.innerHTML = `
-        <div class="recipe-card" onclick="window.location.href='detail.html?id=${selected.id}'" style="cursor: pointer; border: 2px dashed #0056b3; padding: 15px; border-radius: 8px; margin-top: 10px; background: #f8f9fa;">
-          <h3>✨ 今日隨機推薦：${selected.name || selected.title}</h3>
-          <p>點擊這張卡片查看完整食譜與做法！</p>
-        </div>
-      `;
+    // 讓畫面跳出一個確認視窗（或是用自訂卡片），這裡先用 confirm 讓你快速測試
+    if (selected && selected.id) {
+      const isConfirmed = confirm(`✨ 抽到今天推薦：「${selected.name || '這道菜'}」\n\n要查看這道菜的詳細食譜嗎？`);
+      
+      // 只有當使用者點擊「確定」時，才會跳轉到詳細頁
+      if (isConfirmed) {
+        window.location.href = `detail.html?id=${selected.id}`;
+      }
     }
   });
 }
