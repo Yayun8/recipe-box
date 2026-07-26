@@ -93,28 +93,14 @@ if (randomBtn) {
     // 找到首頁放卡片的容器
     const container = document.querySelector("#randomCardContainer");
     if (container && r) {
-      // 判斷分類標籤的文字與顏色
-      let categoryText = "";
-      if (r.category === "sweet") categoryText = '<span class="tag sweet">甜食</span>';
-      else if (r.category === "savory") categoryText = '<span class="tag savory">鹹食</span>';
-
-      // 產生跟你平常常見的食譜卡片一模一樣的 HTML
       container.innerHTML = `
         <div style="margin: 20px auto; max-width: 300px;">
-          <h4 style="color: #666; margin-bottom: 8px;">✨ 今日隨機推薦</h4>
-          <div class="recipe-card" onclick="window.location.href='detail.html?id=${r.id}'" style="cursor: pointer; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative;">
-            ${categoryText}
-            <img src="${r.image || 'default.jpg'}" alt="${r.name}" style="width: 100%; height: 180px; object-fit: cover;">
-            <div style="padding: 15px;">
-              <h3 style="font-size: 18px; margin: 0 0 10px 0; color: #1a2b4c;">${r.name}</h3>
-              <div style="display: flex; justify-content: space-between; align-items: center; color: #666; font-size: 14px;">
-                <span>${r.steps ? r.steps.length : 0} 個步驟</span>
-                <span>⭐</span>
-              </div>
-            </div>
-          </div>
+          <h4 style="color: #666; margin-bottom: 8px; text-align: center;">✨ 今日隨機推薦</h4>
         </div>
       `;
+      // 直接使用你們原本專案的 renderRecipeCard 函式來產生卡片，完美保持一致！
+      const cardElement = renderRecipeCard(r);
+      container.appendChild(cardElement);
     }
   });
 }
