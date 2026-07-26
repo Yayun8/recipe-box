@@ -6,7 +6,7 @@
 <title>Recipe</title>
 <link rel="stylesheet" href="style.css" />
 </head>
-<body data-mode="sweet">
+<body data-mode="all">
 
   <header class="topbar">
     <div class="brand"><span>Recipe</span></div>
@@ -20,19 +20,17 @@
   <main class="wrap">
     <!-- 加上「全部」按鈕 -->
 <div class="tab-switcher" role="tablist" aria-label="甜食或鹹食模式">
-  <!-- 1. 新增的「全部」按鈕 -->
-  <button class="tab-divider" data-tab="all" role="tab">
+  <!-- 讓「全部」按鈕預設帶有 is-active -->
+  <button class="tab-divider is-active" data-tab="all" role="tab">
     <span class="tab-tag">Mode / 00</span>
     🌐 全部
   </button>
 
-  <!-- 原本的甜食按鈕 -->
   <button class="tab-divider" data-tab="sweet" role="tab">
     <span class="tab-tag">Mode / 01</span>
     🍰 甜食
   </button>
   
-  <!-- 原本的鹹食按鈕 -->
   <button class="tab-divider" data-tab="savory" role="tab">
     <span class="tab-tag">Mode / 02</span>
     🍳 鹹食

@@ -13,7 +13,7 @@ export function qsa(sel, root = document) {
 
 /** 取得 / 記住目前甜鹹模式(存在 localStorage,只是 UI 偏好,非食譜資料) */
 export function getMode() {
-  return localStorage.getItem("recipebox_mode") || "sweet";
+  return localStorage.getItem("recipebox_mode") || "all";
 }
 export function setMode(mode) {
   localStorage.setItem("recipebox_mode", mode);
