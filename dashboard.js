@@ -69,7 +69,17 @@ if (grid) {
     const id = btn.dataset.favId;
     const recipe = allRecipes.find((r) => r.id === id);
     if (!recipe) return;
-    toggleFavorite(id, !recipe.isFavorite).catch((err) => console.error(err));
+
+    // 立即切換本機資料狀態並重新渲染
+    recipe.isFavorite = !recipe.isFavorite;
+    render();
+
+    // 同步寫入 Firestore 後台
+    toggleFavorite(id, recipe.isFavorite).catch((err) => {
+      console.error(err);
+      recipe.isFavorite = !recipe.isFavorite;
+      render();
+    });
   });
 }
 
