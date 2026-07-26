@@ -18,9 +18,9 @@ function render() {
   if (filter === "sweet" || filter === "savory") {
     list = list.filter((r) => r.category === filter);
   } else if (filter === "fav") {
-    list = list.filter((r) => r.isFavorite);
+    list = list.filter((r) => r.isFavorite || r.favorite || r.isFav);
   } else if (filter === "all") {
-    list = allRecipes; // 「全部」顯示所有食譜
+    list = allRecipes;
   }
 
   if (keyword) {
